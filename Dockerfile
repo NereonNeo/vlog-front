@@ -1,7 +1,8 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --omit=dev --ignore-scripts
+ENV HUSKY=0
+RUN npm ci
 
 FROM node:20-alpine AS builder
 WORKDIR /app
@@ -14,11 +15,12 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV HUSKY=0
 
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
+COPY package*.json ./
+RUN npm ci --omit=dev --ignore-scripts
+
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.ts ./
+COPY --from=builder /app/next.config.ts ./next.config.ts
 
 EXPOSE 3000
 CMD ["npm", "run", "start"]
