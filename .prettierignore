@@ -1,0 +1,32 @@
+# Ignore artifacts:
+build
+coverage
+
+node_modules/
+dist/
+
+.next/**
+out/**
+build/**
+next-env.d.ts
+
+**/.git
+**/.svn
+**/.next
+**/.husky
+**/.hg
+**/node_modules
+
+# Ignore specific files
+package-lock.json
+package.json
+docker-compose.yml
+commitlint.config.ts 
+.prettierrc
+eslint.config.mjs
+tsconfig.json
+yarn.lock
+.env
+.env.local
+.prettierignore
+.eslintrc.json

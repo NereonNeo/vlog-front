@@ -1,0 +1,27 @@
+services:
+  next:
+    build: .
+    container_name: vlog-front
+    restart: unless-stopped
+    networks:
+      - proxy
+    environment:
+      - NODE_ENV=production
+
+    labels:
+      - traefik.enable=true
+
+      - traefik.http.routers.next.rule=Host(`yakubs.online`)
+      - traefik.http.routers.next.entrypoints=websecure
+      - traefik.http.routers.next.tls=true
+      - traefik.http.routers.next.tls.certresolver=le
+      - traefik.http.services.next.loadbalancer.server.port=3000
+
+      - traefik.http.routers.next-http.rule=Host(`yakubs.online`)
+      - traefik.http.routers.next-http.entrypoints=web
+      - traefik.http.routers.next-http.middlewares=redirect-to-https
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+
+networks:
+  proxy:
+    external: true
