@@ -1,52 +1,123 @@
-import Image from "next/image";
+import Link from "next/link";
+import { heroContent } from "../shared/content/hero";
+import { skills } from "../shared/content/skills";
+import { getFeaturedProjects, getLatestPosts } from "../shared/content/queries";
+import { Card } from "../shared/components/Card";
+import { Tag } from "../shared/components/Tag";
+import { Badge } from "../shared/components/Badge";
+import { ReadingTimeWidget } from "../shared/components/ReadingTimeWidget";
 
 export default function Home() {
+  const featuredProjects = getFeaturedProjects();
+  const latestPosts = getLatestPosts(3);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image className="dark:invert" src="/next.svg" alt="Next.js logo" width={100} height={20} priority />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="grain grid-overlay">
+      <section className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 py-20 md:py-28">
+        <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+          <div className="space-y-6">
+            <p className="text-xs uppercase tracking-[0.4em] text-soft">{heroContent.role}</p>
+            <h1 className="text-4xl font-semibold leading-tight md:text-5xl">{heroContent.name}</h1>
+            <p className="text-lg text-muted">{heroContent.role}</p>
+            <div className="space-y-3 text-base text-muted">
+              {heroContent.summary.map((line) => (
+                <p key={line}>{line}</p>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-4">
+              {heroContent.ctas.map((cta) => (
+                <Link
+                  key={cta.href}
+                  href={cta.href}
+                  className="focus-ring rounded-full border border-[var(--border-soft)] px-6 py-3 text-xs uppercase tracking-[0.4em] text-white transition hover:border-[var(--accent)]"
+                >
+                  {cta.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <Card as="section" className="p-8">
+            <h2 className="text-sm uppercase tracking-[0.4em] text-soft">Core Focus</h2>
+            <p className="mt-4 text-xl font-semibold">Interfaces that stay calm under load.</p>
+            <p className="mt-4 text-sm text-muted">
+              I build product surfaces that are readable, fast, and deliberate — especially when the data is noisy.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {skills.slice(0, 6).map((skill) => (
+                <Tag key={skill} label={skill} />
+              ))}
+            </div>
+          </Card>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        <section className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold">Featured Projects</h2>
+            <Link href="/projects" className="focus-ring text-sm uppercase tracking-[0.3em] text-soft">
+              View all
+            </Link>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            {featuredProjects.map((project) => (
+              <Link key={project.slug} href={`/projects/${project.slug}`} className="focus-ring">
+                <Card as="article" className="flex h-full flex-col gap-6 p-6 transition hover:-translate-y-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-semibold">{project.title}</h3>
+                    <Badge label={project.status} variant={project.status} />
+                  </div>
+                  <p className="text-sm text-muted">{project.summary}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {project.stack.slice(0, 4).map((stack) => (
+                      <Tag key={stack} label={stack} />
+                    ))}
+                  </div>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold">Latest Posts</h2>
+            <Link href="/posts" className="focus-ring text-sm uppercase tracking-[0.3em] text-soft">
+              View all
+            </Link>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {latestPosts.map((post) => (
+              <Link key={post.slug} href={`/posts/${post.slug}`} className="focus-ring">
+                <Card as="article" className="flex h-full flex-col gap-4 p-6 transition hover:-translate-y-1">
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-lg font-semibold">{post.title}</h3>
+                    <p className="text-xs text-soft">{post.date}</p>
+                  </div>
+                  <p className="text-sm text-muted">{post.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {post.tags.slice(0, 2).map((tag) => (
+                      <Tag key={tag} label={tag} />
+                    ))}
+                  </div>
+                  <ReadingTimeWidget minutes={post.readingTimeMinutes} />
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="surface-muted flex flex-col gap-6 p-8 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 className="text-2xl font-semibold">Let us build something sharp.</h2>
+            <p className="mt-2 text-sm text-muted">Open to product and design system work.</p>
+          </div>
+          <Link
+            href="mailto:hello@yakub.dev"
+            className="focus-ring rounded-full border border-[var(--border-soft)] px-6 py-3 text-xs uppercase tracking-[0.4em] text-white transition hover:border-[var(--accent)]"
           >
-            <Image className="dark:invert" src="/vercel.svg" alt="Vercel logomark" width={16} height={16} />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            Contact
+          </Link>
+        </section>
+      </section>
+    </main>
   );
 }
